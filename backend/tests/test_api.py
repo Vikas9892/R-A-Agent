@@ -9,6 +9,7 @@ def test_health_endpoint() -> None:
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok", "app": "R & A Agent"}
+    assert "x-request-id" in response.headers
 
 
 def test_chat_endpoint_success() -> None:
@@ -20,8 +21,13 @@ def test_chat_endpoint_success() -> None:
     }
 
     with patch("app.api.routes.chat.workflow.invoke", return_value=mock_workflow_result):
-        response = client.post("/api/v1/chat", json={"message": "What is 2 + 2?"})
+        response = client.post(
+            "/api/v1/chat",
+            json={"message": "What is 2 + 2?"},
+            headers={"X-Request-ID": "test-req-123"},
+        )
         assert response.status_code == 200
+        assert response.headers.get("x-request-id") == "test-req-123"
         data = response.json()
         assert data["answer"] == "The sum of 2 and 2 is 4."
         assert data["tool_calls"] == 1
@@ -39,7 +45,7 @@ def test_chat_endpoint_oversized_message_validation() -> None:
 
 
 def test_chat_endpoint_internal_error_handling() -> None:
-    with patch("app.api.routes.chat.workflow.invoke", side_effect=Exception("Database failure")):
+    with patch("app.api.routes.chat.workflow.invoke", side_effect=Exception("Workflow runtime crash")):
         response = client.post("/api/v1/chat", json={"message": "Valid query"})
         assert response.status_code == 500
         assert "Workflow execution failed" in response.json()["detail"]

@@ -140,6 +140,15 @@ Output Guardrail
   - Bounds output length to `MAX_OUTPUT_LENGTH` (4,000 characters).
   - Enforces `MAX_TOOL_CALLS = 5` invariant.
 
+### Observability & Request Tracing
+
+- **Request ID Middleware**: Every inbound request receives a unique UUIDv4 `X-Request-ID` attached to response headers and request state.
+- **Structured Non-Sensitive Logging**:
+  - Request receipt, method, and route
+  - Agent step lifecycle (Research Agent start, tool invocation, tool completion, Answer Agent start)
+  - Latency and status codes
+  - **Zero credential leaks**: API keys, auth tokens, and raw sensitive prompt text are strictly excluded from logs.
+
 ---
 
 ## Tech Stack

@@ -1,9 +1,9 @@
 import logging
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 from app.graph.workflow import workflow
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app.api.chat")
 
 router = APIRouter(prefix="/api/v1", tags=["Chat"])
 
@@ -33,7 +33,7 @@ class ChatResponse(BaseModel):
     status_code=status.HTTP_200_OK,
     summary="Execute Research & Answer agent workflow",
 )
-def chat_endpoint(request: ChatRequest) -> ChatResponse:
+def chat_endpoint(request: ChatRequest, req: Request) -> ChatResponse:
     """Synchronous endpoint executing the full LangGraph workflow.
 
     Workflow execution steps:
@@ -42,6 +42,9 @@ def chat_endpoint(request: ChatRequest) -> ChatResponse:
     3. Answer Agent (factual synthesis)
     4. Output Guardrail
     """
+    request_id = getattr(req.state, "request_id", "local")
+    logger.info("[%s] Processing chat request (input_length=%d)", request_id, len(request.message))
+
     try:
         initial_state = {
             "user_input": request.message,
@@ -55,9 +58,16 @@ def chat_endpoint(request: ChatRequest) -> ChatResponse:
         answer = result.get("final_answer", "")
         tool_calls = result.get("tool_calls", 0)
 
+        logger.info(
+            "[%s] Workflow completed successfully (tool_calls=%d, answer_length=%d)",
+            request_id,
+            tool_calls,
+            len(answer),
+        )
+
         return ChatResponse(answer=answer, tool_calls=tool_calls)
     except Exception as exc:
-        logger.error("Chat endpoint workflow failure: %s", exc)
+        logger.error("[%s] Workflow execution error: %s", request_id, exc)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Workflow execution failed: {exc}",
