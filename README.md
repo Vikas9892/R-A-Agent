@@ -56,6 +56,20 @@ Three model tiers are configured via environment variables:
 
 This eliminates vendor lock-in and allows seamless provider switching without altering agent code.
 
+### Agent Tools
+
+The Research Agent is equipped with three clean, typed tools:
+
+1. **Calculator** (`backend/app/tools/calculator.py`):
+   - Evaluates arithmetic expressions safely using Python's Abstract Syntax Tree (`ast`).
+   - Supports addition, subtraction, multiplication, division, modulo, exponents, and parentheses.
+   - **Zero raw `eval()`**: completely prevents arbitrary code execution.
+2. **Weather** (`backend/app/tools/weather.py`):
+   - Retrieves live weather conditions (temperature, windspeed) for any city using Open-Meteo's geocoding and forecast APIs.
+   - Fully mockable and requires no mandatory third-party key.
+3. **Web Search** (`backend/app/tools/web_search.py`):
+   - Performs lightweight live web search queries via DuckDuckGo to obtain up-to-date documentation, definitions, and articles.
+
 ---
 
 ## Tech Stack
