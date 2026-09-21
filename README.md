@@ -98,6 +98,16 @@ START
 END
 ```
 
+### Research Agent
+
+The **Research Agent** (`backend/app/agents/research_agent.py`):
+1. Analyzes the user's intent.
+2. Decides whether to invoke a tool (`calculator`, `weather`, or `web_search`) or finalize research findings.
+3. Automatically iterates in a tool-calling feedback loop until sufficient evidence is gathered.
+4. Enforces a strict upper bound of `MAX_TOOL_CALLS = 5` to prevent infinite loops or runaway API billing.
+5. Captures and handles tool failures gracefully.
+6. Returns accumulated research notes and exact tool call counts.
+
 ---
 
 ## Tech Stack

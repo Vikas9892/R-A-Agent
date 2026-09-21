@@ -1,5 +1,6 @@
 from langgraph.graph import END, START, StateGraph
 from app.graph.state import AgentState
+from app.agents.research_agent import run_research_agent
 
 
 def input_guardrail_node(state: AgentState) -> dict:
@@ -8,10 +9,12 @@ def input_guardrail_node(state: AgentState) -> dict:
 
 
 def research_agent_node(state: AgentState) -> dict:
-    """Placeholder for Research Agent (wired to real agent in Phase 4)."""
+    """Execute the Research Agent with bounded tool-calling loop."""
+    user_input = state.get("user_input", "")
+    result = run_research_agent(user_input)
     return {
-        "research": f"Initial research findings for: {state.get('user_input', '')}",
-        "tool_calls": state.get("tool_calls", 0),
+        "research": result["research"],
+        "tool_calls": result["tool_calls"],
     }
 
 
