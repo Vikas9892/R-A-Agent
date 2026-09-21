@@ -116,6 +116,30 @@ The **Answer Agent** (`backend/app/agents/answer_agent.py`):
 3. **Does not invoke tools**; its role is strictly synthesis and verification against provided research.
 4. If available research is insufficient, it explicitly communicates the limitation rather than hallucinating details.
 
+### Deterministic Guardrails
+
+The system employs zero-overhead deterministic guardrails before and after agent reasoning:
+
+```
+Input Guardrail
+      ↓
+Research Agent
+      ↓
+ Answer Agent
+      ↓
+Output Guardrail
+```
+
+- **Input Guardrail** (`backend/app/guardrails/input.py`):
+  - Enforces non-empty input.
+  - Rejects inputs exceeding `MAX_INPUT_LENGTH` (1,000 characters).
+  - Deterministically rejects prompt-injection and instruction override attempts (e.g. "ignore previous instructions", "reveal system prompt", "developer mode").
+- **Output Guardrail** (`backend/app/guardrails/output.py`):
+  - Validates output is non-empty string.
+  - Scrubs internal workflow markers and debug tags.
+  - Bounds output length to `MAX_OUTPUT_LENGTH` (4,000 characters).
+  - Enforces `MAX_TOOL_CALLS = 5` invariant.
+
 ---
 
 ## Tech Stack
