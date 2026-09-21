@@ -65,3 +65,24 @@ def test_research_agent_max_tool_calls_limit() -> None:
     with patch("app.agents.research_agent.generate_response", return_value=continuous_tool_response):
         result = run_research_agent("Loop forever", max_tool_calls=5)
         assert result["tool_calls"] == 5
+
+
+def test_answer_agent_successful_synthesis() -> None:
+    from app.agents.answer_agent import run_answer_agent
+
+    mock_llm_response = "FastAPI is a modern, high-performance web framework for Python."
+
+    with patch("app.agents.answer_agent.generate_response", return_value=mock_llm_response):
+        answer = run_answer_agent("What is FastAPI?", "FastAPI is built on Starlette and Pydantic.")
+        assert answer == "FastAPI is a modern, high-performance web framework for Python."
+
+
+def test_answer_agent_insufficient_information() -> None:
+    from app.agents.answer_agent import run_answer_agent
+
+    mock_llm_response = "The available research is insufficient to determine the exact date."
+
+    with patch("app.agents.answer_agent.generate_response", return_value=mock_llm_response):
+        answer = run_answer_agent("When will Project X launch?", "No external research gathered.")
+        assert "insufficient" in answer.lower()
+

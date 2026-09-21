@@ -1,6 +1,7 @@
 from langgraph.graph import END, START, StateGraph
 from app.graph.state import AgentState
 from app.agents.research_agent import run_research_agent
+from app.agents.answer_agent import run_answer_agent
 
 
 def input_guardrail_node(state: AgentState) -> dict:
@@ -19,9 +20,11 @@ def research_agent_node(state: AgentState) -> dict:
 
 
 def answer_agent_node(state: AgentState) -> dict:
-    """Placeholder for Answer Agent (wired to real agent in Phase 5)."""
+    """Execute the Answer Agent to synthesize final answer from research."""
+    user_input = state.get("user_input", "")
     research = state.get("research", "")
-    return {"final_answer": f"Synthesized answer based on: {research}"}
+    answer = run_answer_agent(user_input, research)
+    return {"final_answer": answer}
 
 
 def output_guardrail_node(state: AgentState) -> dict:

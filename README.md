@@ -108,6 +108,14 @@ The **Research Agent** (`backend/app/agents/research_agent.py`):
 5. Captures and handles tool failures gracefully.
 6. Returns accumulated research notes and exact tool call counts.
 
+### Answer Agent
+
+The **Answer Agent** (`backend/app/agents/answer_agent.py`):
+1. Receives the user request alongside the factual research gathered by the Research Agent.
+2. Synthesizes a direct, concise, and structured final answer.
+3. **Does not invoke tools**; its role is strictly synthesis and verification against provided research.
+4. If available research is insufficient, it explicitly communicates the limitation rather than hallucinating details.
+
 ---
 
 ## Tech Stack

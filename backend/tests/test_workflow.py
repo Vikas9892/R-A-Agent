@@ -15,8 +15,12 @@ def test_workflow_execution() -> None:
         "action": "finish",
         "findings": "LangGraph is a library for building stateful, multi-actor applications with LLMs."
     })
+    mock_final_answer = "LangGraph enables building robust multi-actor agent workflows."
 
-    with patch("app.agents.research_agent.generate_response", return_value=mock_llm_finish):
+    with (
+        patch("app.agents.research_agent.generate_response", return_value=mock_llm_finish),
+        patch("app.agents.answer_agent.generate_response", return_value=mock_final_answer),
+    ):
         result = workflow.invoke(initial_state)
 
         assert result is not None
@@ -25,5 +29,5 @@ def test_workflow_execution() -> None:
         assert "research" in result
         assert "LangGraph is a library" in result["research"]
         assert "final_answer" in result
-        assert "Synthesized answer" in result["final_answer"]
+        assert result["final_answer"] == "LangGraph enables building robust multi-actor agent workflows."
         assert result["tool_calls"] == 0
