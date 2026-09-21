@@ -1,6 +1,6 @@
 # R & A Agent — Research & Answer Agent
 
-A lightweight, interview-friendly, two-agent AI system built with **FastAPI**, **LangGraph**, **LiteLLM**, and **Next.js**.
+A lightweight, two-agent AI system built with **FastAPI**, **LangGraph**, **LiteLLM**, and **Next.js**.
 
 ---
 
@@ -324,13 +324,3 @@ All 33 tests execute completely offline using mocks for external tools and LLMs.
 
 ---
 
-## Interview Questions & Architecture Decisions
-
-#### Q: Why LangGraph instead of an autonomous agent framework?
-> **Answer**: LangGraph gives explicit, deterministic control over the workflow state, step transitions, and tool limits. Instead of hiding the execution inside an unpredictable autonomous while-loop, LangGraph makes the two-agent pipeline state machine inspectable, testable, and debuggable.
-
-#### Q: Why LiteLLM?
-> **Answer**: LiteLLM provides a standardized interface across all major model providers (OpenAI, Anthropic, Groq, Google, Ollama). It allows switching models using environment variables without refactoring agent logic.
-
-#### Q: Why two agents instead of one?
-> **Answer**: Splitting into a **Research Agent** (focused on tool selection, query formulation, and evidence gathering) and an **Answer Agent** (focused strictly on factual synthesis from gathered notes) enforces clean separation of concerns and significantly reduces hallucinations.
