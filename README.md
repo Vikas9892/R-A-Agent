@@ -243,6 +243,46 @@ cp .env.example .env
 
 ---
 
+## API Reference
+
+### 1. Health Check
+`GET /health`
+
+Response:
+```json
+{
+  "status": "ok",
+  "app": "R & A Agent"
+}
+```
+
+### 2. Chat & Research Execution
+`POST /api/v1/chat`
+
+Request:
+```json
+{
+  "message": "What is 15 * 24 + 180?"
+}
+```
+
+Response:
+```json
+{
+  "answer": "15 * 24 + 180 equals 540.",
+  "tool_calls": 1
+}
+```
+
+Example `curl` call:
+```bash
+curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What is the weather in Tokyo?"}'
+```
+
+---
+
 ## How to Run the Frontend
 
 1. Navigate to the frontend directory:
