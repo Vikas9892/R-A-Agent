@@ -70,6 +70,34 @@ The Research Agent is equipped with three clean, typed tools:
 3. **Web Search** (`backend/app/tools/web_search.py`):
    - Performs lightweight live web search queries via DuckDuckGo to obtain up-to-date documentation, definitions, and articles.
 
+### LangGraph Workflow & State
+
+The workflow is built with LangGraph's `StateGraph` for explicit execution control.
+
+#### Agent State:
+```python
+class AgentState(TypedDict):
+    user_input: str
+    research: str
+    final_answer: str
+    tool_calls: int
+```
+
+#### Graph Pipeline:
+```
+START
+  ↓
+[input_guardrail]
+  ↓
+[research_agent]
+  ↓ (calls tools if needed)
+[answer_agent]
+  ↓
+[output_guardrail]
+  ↓
+END
+```
+
 ---
 
 ## Tech Stack
